@@ -7,8 +7,8 @@ This task focuses on:
  - Understanding the RISC-V execution flow
  - Preparing for upcoming FPGA and IP development work
 
----
-## STEP - 1 : Setting up GitHub Codespace 
+<details>
+  <summary> STEP - 1 : Setting up GitHub Codespace  </summary>
 
 In this step, the development environment is set up using GitHub Codespaces to ensure a consistent and pre-configured workspace for the VSD FPGA Mini Program.
 
@@ -35,9 +35,10 @@ iverilog -V
 ![fork4](Images/fork4.png) 
 ![fork5](Images/fork5.png) 
 ![fork6](Images/fork6.png) 
+</details>
 
----
-## STEP - 2 : Verifying the RISC-V Reference Flow 
+<details>
+  <summary> STEP - 2 : Verifying the RISC-V Reference Flow </summary>  
 
 In this step, the basic RISC-V software flow is verified by compiling and simulating C programs using the `riscv64-unknown-elf-gcc` toolchain.
 
@@ -139,9 +140,11 @@ spike pk sum1ton.o
 ![vnc6](Images/novnc6.png)   
 
 ![vnc7](Images/novnc7.png)  
+</details>
 
----
-## STEP - 3 : Running Basic VSDFPGA Labs
+<details>
+  <summary>  STEP - 3 : Running Basic VSDFPGA Labs </summary>
+
 
 In this step, a program originally intended for FPGA execution is tested using software based simulation without using actual hardware.
 
@@ -173,7 +176,7 @@ spike pk riscv_logo.o
 ![vnc13](Images/novnc13.png)   
 
 
-
+</details>
 
 
 
