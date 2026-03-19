@@ -14,16 +14,16 @@ In this step, the development environment is set up using GitHub Codespaces to e
 
 1. Fork the repository at ` https://github.com/vsdip/vsd-riscv2 ` to your GitHub account.
 
-![fork1](TASK%20-%201/Images/fork1.png)
+![fork1](Images/fork1.png)
 
 2. Navigate to the repository and click on the “Code” button and select the “Codespaces” tab and create a new Codespace instance.
 
-![fork2](TASK%20-%201/Images/fork2.png) 
+![fork2](Images/fork2.png) 
 
 3. Wait for the environment to initialize, all required dependencies and tools will be automatically configured.
 The window appears as shown below.
 
-![fork3](TASK%20-%201/Images/fork3.png) 
+![fork3](Images/fork3.png) 
 
 4. Once the Codespace is ready, open the terminal and verify the setup, by checking the versions of the available tools.
 ```
@@ -32,9 +32,9 @@ spike -help
 iverilog -V
 ```
 
-![fork4](TASK%20-%201/Images/fork4.png) 
-![fork5](TASK%20-%201/Images/fork5.png) 
-![fork6](TASK%20-%201/Images/fork6.png) 
+![fork4](Images/fork4.png) 
+![fork5](Images/fork5.png) 
+![fork6](Images/fork6.png) 
 
 ---
 ## STEP - 2 : Verifying the RISC-V Reference Flow 
@@ -50,7 +50,7 @@ riscv64-unknown-elf-gcc -o sum1ton.o sum1ton.c
 spike pk sum1ton.o
 ```
 
-![fork7](TASK%20-%201/Images/fork7.png)  
+![fork7](Images/fork7.png)  
 
 After verifying the sample program, a custom C program is implemented:
 
@@ -59,7 +59,7 @@ Compile the program using the RISC-V GCC compiler.
 Run the compiled file and simulate it in spike to observe the output.
 
 ```
-touch kntom.c
+touch kmtom.c
 code kmtom.c
 
 riscv64-unknown-elf-gcc -o kmtom.o kmtom.c
@@ -84,8 +84,8 @@ int main() {
 
 ```
 
-![fork8](TASK%20-%201/Images/fork8.png)   
-![fork9](TASK%20-%201/Images/fork9.png)   
+![fork8](Images/fork8.png)   
+![fork9](Images/fork9.png)   
 
 Now the same compilation and simulation workflow is performed using the graphical Linux environment available within GitHub Codespaces. 
 
@@ -93,17 +93,17 @@ Now the same compilation and simulation workflow is performed using the graphica
 Look for the forwarded port named noVNC Desktop (6080).
 Click the Forwarded Address link.
 
-![vnc1](TASK%20-%201/Images/novnc1.png)   
+![vnc1](Images/novnc1.png)   
 
 4. A new browser tab opens with a directory listing. Click vnc_lite.html.
 
-![vnc2](TASK%20-%201/Images/novnc2.png)   
+![vnc2](Images/novnc2.png)   
 
 5. The Linux desktop appears in your browser.
 Right-click anywhere on the desktop background.
 Select Open Terminal.
 
-![vnc3](TASK%20-%201/Images/novnc3.png)    
+![vnc3](Images/novnc3.png)    
 
 6. Navigate to the samples directory containing the sample program.
 Compile the provided sum1ton.c program using the native GCC tool and then also using the RISC-V GCC compiler.
@@ -125,9 +125,9 @@ riscv64-unknown-elf-gcc -o kmtom.o kmtom.c
 spike pk kmtom.o
 ```
 
-![vnc4](TASK%20-%201/Images/novnc4.png)      
+![vnc4](Images/novnc4.png)      
 
-![vnc5](TASK%20-%201/Images/novnc5.png)  
+![vnc5](Images/novnc5.png)  
 
 
 7. Further, edit the `sum1ton.c` file , say n = 12 and rerun using the same commands.
@@ -136,9 +136,43 @@ gedit sum1ton.c
 riscv64-unknown-elf-gcc -o sum1ton.o sum1ton.c
 spike pk sum1ton.o
 ```
-![vnc6](TASK%20-%201/Images/novnc6.png)   
+![vnc6](Images/novnc6.png)   
 
-![vnc7](TASK%20-%201/Images/novnc7.png)  
+![vnc7](Images/novnc7.png)  
+
+---
+## STEP - 3 : Running Basic VSDFPGA Labs
+
+In this step, a program originally intended for FPGA execution is tested using software based simulation without using actual hardware.
+
+1. Clone the repository `https://github.com/vsdip/vsdfpga_labs.git`. Navigate to the proper directory.
+
+```
+git clone https://github.com/vsdip/vsdfpga_labs.git
+cd vsdfpga_labs/basicRISCV/Firmware
+```
+
+![vnc9](Images/novnc9.png)  
+
+ 2. Now compile the `riscv_logo.c` program using native GCC and also using the RISC-V GCC compiler
+
+```
+gcc riscv_logo.c
+./a.out
+
+riscv64-unknown-elf-gcc -o riscv_logo.o riscv_logo.c
+spike pk riscv_logo.o
+```
+
+![vnc10](Images/novnc10.png)    
+
+![vnc11](Images/novnc11.png)  
+
+![vnc12](Images/novnc12.png)  
+
+![vnc13](Images/novnc13.png)   
+
+
 
 
 
