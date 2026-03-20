@@ -1,11 +1,15 @@
 #  TASK - 1 : Environment Setup & RISC-V Reference Bring-Up
-
+---
 ## Objective
 Set up the development environment and successfully run a working RISC-V reference design, followed by running the VSDFPGA labs on the same environment.
 This task focuses on:
  - Toolchain readiness
  - Understanding the RISC-V execution flow
  - Preparing for upcoming FPGA and IP development work
+
+This task does not use any hardware.
+
+---
 
 <details>
   <summary> STEP - 1 : Setting up GitHub Codespace  </summary>
@@ -178,13 +182,44 @@ spike pk riscv_logo.o
 
 </details>
 
+<details>
+  <summary> STEP - 4 : Local Machine Preparation  </summary>  
+
+The required toolchains are installed to support compilation and simulation workflows. This includes:
+
+ - Native GCC compiler for standard program execution
+ - RISC-V cross-compiler (riscv64-unknown-elf-gcc) for generating RISC-V binaries
+ - Spike along with Proxy Kernel (pk) for RISC-V simulation
+ - Icarus Verilog (iverilog) for HDL simulation
 
 
+</details>
 
+---
 
+## Undersatnding Check
 
+**1. Where is the RISC-V program located in the vsd-riscv2 repository?**
 
+=> The RISC-V C-code programs are located in the `samples` directory of `vsd-riscv2` repository.
 
+**2. How is the program compiled and loaded into memory?**
+
+=> The program is compiled using the `riscv64-unknown-elf-gcc` cross-compiler into an ELF file. It is loaded into the simulated memory by the Spike ISA Simulator, which places the instructions at the base address defined in the linker script.
+
+**3. How does the RISC-V core access memory and memory-mapped IO?**
+
+=> The core uses standard Load/Store instructions. It treats both physical memory and hardware peripherals as specific hexadecimal addresses within a unified address space.
+
+**4. Where would a new FPGA IP block logically integrate in this system?**
+
+=> A new IP block integrates as a Memory-Mapped IO on the System Bus. It sits alongside the memory and other peripherals, the RISC-V core communicates with it by reading from or writing to the specific MMIO address range assigned to that IP in the system's address map.
+
+---
+## Environment used 
+
+ - GitHub Codespace on windows.
+ - Local setup through virtual machine.
 
 
 
