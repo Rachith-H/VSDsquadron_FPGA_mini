@@ -185,12 +185,113 @@ spike pk riscv_logo.o
 <details>
   <summary> STEP - 4 : Local Machine Preparation  </summary>  
 
-The required toolchains are installed to support compilation and simulation workflows. This includes:
+The required toolchains are installed to support compilation and simulation workflows. This includes: 
 
- - Native GCC compiler for standard program execution
- - RISC-V cross-compiler (riscv64-unknown-elf-gcc) for generating RISC-V binaries
- - Spike along with Proxy Kernel (pk) for RISC-V simulation
- - Icarus Verilog (iverilog) for HDL simulation
+1. Native GCC compiler for standard program execution.
+
+ - Ubuntu may include GCC by default, but not always. You can check using `gcc --version`. If not installed, use `sudo apt install build-essential`. GCC compiles C programs into executable files that can be run on the system.
+
+![tool1](Images/tool1.png) 
+
+2. RISC-V cross-compiler (riscv64-unknown-elf-gcc) for generating RISC-V binaries.
+
+ - Follow these commands to install the RISC-V GCC toolchain required for compiling programs targeting the RISC-V architecture.
+
+```
+mkdir -p ~/riscv && cd ~/riscv
+git clone https://github.com/riscv/riscv-gnu-toolchain
+cd riscv-gnu-toolchain
+export RISCV=~/riscv/install
+./configure --prefix=$RISCV
+make -j$(nproc)
+echo 'export PATH=~/riscv/install/bin:$PATH' >> ~/.bashrc && source ~/.bashrc
+
+riscv64-unknown-elf-gcc --version
+```
+
+![tool2](Images/tool2.png) 
+
+
+
+3. Spike along with Proxy Kernel (pk) for RISC-V simulation.
+
+ - Follow these commands to install the Spike simulator, used for running and testing RISC-V programs.
+
+```
+cd ~/riscv
+git clone https://github.com/riscv-software-src/riscv-isa-sim
+cd riscv-isa-sim
+mkdir build && cd build
+../configure --prefix=$RISCV
+make -j$(nproc)
+sudo make install
+
+cd ~/riscv
+git clone https://github.com/riscv/riscv-pk
+cd riscv-pk
+mkdir build && cd build
+../configure --prefix=$RISCV --host=riscv64-unknown-elf
+make -j$(nproc)
+sudo make install
+
+spike --help
+
+```
+
+![tool3](Images/tool3.png) 
+
+
+4. Icarus Verilog (iverilog) for HDL simulation
+
+ - Follow these commands to install Icarus Verilog (iverilog), used for compiling and simulating Verilog HDL designs.
+
+```
+sudo apt update
+sudo apt install iverilog
+
+iverilog -V
+```
+
+![tool4](Images/tool4.png) 
+
+
+Further, clone the Github repositories used previously and run the programs on your local machine.
+
+```
+git clone https://github.com/vsdip/vsd-riscv2
+git clone https://github.com/vsdip/vsdfpga_labs.git
+```
+
+![tool5](Images/tool5.png) 
+
+
+```
+cd vsd-riscv2/samples/
+
+gcc sum1ton.c
+./a.out
+
+riscv64-unknown-elf-gcc -o sum1ton.o sum1ton.c
+spike pk sum1ton.o
+```
+
+![tool6](Images/tool6.png) 
+
+
+```
+cd vsdfpga_labs/basicRISCV/Firmware
+
+gcc riscv_logo.c
+./a.out
+
+riscv64-unknown-elf-gcc -o riscv_logo.o riscv_logo.c
+spike pk riscv_logo.o
+```
+
+![tool7](Images/tool7.png) 
+
+![tool8](Images/tool8.png) 
+
 
 
 </details>
