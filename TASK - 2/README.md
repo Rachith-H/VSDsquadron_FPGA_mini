@@ -12,7 +12,7 @@ This task formally transitions the cohort from environment setup to real IP deve
 
 #### **Overview**
 
-The given System-on-Chip (SoC) consists of a simple RISC-V processor integrated with on-chip memory and memory-mapped peripherals. The design follows a **memory-mapped I/O architecture**, where both RAM and peripherals are accessed using a unified address space.
+The given [SoC](rtl/riscv.v) consists of a simple RISC-V processor integrated with on-chip memory and memory-mapped peripherals. The design follows a **memory-mapped I/O architecture**, where both RAM and peripherals are accessed using a unified address space.
 
 ---
 
