@@ -112,7 +112,7 @@ This modular approach allows easy addition of new peripherals without modifying 
 
 ### **Overview**
 
-A General Purpose Input/Output (GPIO) IP block is designed to provide a simple memory-mapped interface for the processor to interact with external signals. In this design, the GPIO module implements a 32-bit register that can be written to and read from by the CPU through the SoC bus.
+A General Purpose Input/Output (GPIO) [IP block](rtl/GPIO_reg_IP.v) is designed to provide a simple memory-mapped interface for the processor to interact with external signals. In this design, the GPIO module implements a 32-bit register that can be written to and read from by the CPU through the SoC bus.
 
 The GPIO IP is integrated as a peripheral in the I/O address space and is accessed using standard load and store instructions from the RISC-V processor.
 
