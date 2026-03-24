@@ -210,7 +210,7 @@ The GPIO IP provides a simple and effective interface for processor-controlled o
 
 ### **Overview**
 
-The GPIO IP is integrated into the existing RISC-V SoC using a memory-mapped I/O approach. The SoC already supports peripherals such as LEDs and UART, and the GPIO module is added as an additional peripheral within the I/O address space.
+The GPIO IP is integrated into the given [RISC-V SoC](rtl/riscv.v) using a memory-mapped I/O approach. The SoC already supports peripherals such as LEDs and UART, and the GPIO module is added as an additional peripheral within the I/O address space.
 
 The integration involves assigning a unique address to the GPIO IP, generating control signals based on address decoding, connecting data paths, and updating the read data multiplexer.
 
