@@ -107,7 +107,7 @@ This modular approach allows easy addition of new peripherals without modifying 
 
 
 <details>
-  <summary> STEP - 2: RTL Design of GPIO IP </summary>
+  <summary> STEP - 2 : RTL Design of GPIO IP </summary>
 
 
 ### **Overview**
@@ -197,5 +197,180 @@ This separation of concerns allows:
 
 
 The GPIO IP provides a simple and effective interface for processor-controlled output operations. Its clean separation between address decoding (handled by the SoC) and functional logic (handled by the IP) ensures modularity and ease of integration into the system.
+
+</details>
+
+
+
+
+
+<details>
+  <summary> STEP - 3 : Integration of GPIO IP into the SoC </summary>
+
+
+### **Overview**
+
+The GPIO IP is integrated into the existing RISC-V SoC using a memory-mapped I/O approach. The SoC already supports peripherals such as LEDs and UART, and the GPIO module is added as an additional peripheral within the I/O address space.
+
+The integration involves assigning a unique address to the GPIO IP, generating control signals based on address decoding, connecting data paths, and updating the read data multiplexer.
+
+---
+
+### **1. Address Mapping**
+
+A new address location is assigned to the GPIO IP using the existing bit-based decoding scheme:
+
+* A new parameter is defined:
+
+  ```verilog
+  localparam GPIO_IP_bit = 3;
+  ```
+
+* The GPIO IP is mapped to the I/O region when:
+
+  * `mem_addr[22] = 1` (I/O space)
+  * `mem_wordaddr[GPIO_IP_bit] = 1`
+
+This effectively assigns a unique base address for the GPIO peripheral within the memory-mapped I/O space.
+
+---
+
+### **2. Address Decode Signal (GPIO_sel)**
+
+A selection signal is generated to identify when the CPU is accessing the GPIO IP:
+
+```verilog
+wire GPIO_sel = isIO & mem_wordaddr[GPIO_IP_bit];
+```
+
+**Purpose:**
+
+* Ensures the GPIO IP responds only when:
+
+  * The access is in the I/O region (`isIO`)
+  * The address matches the assigned GPIO bit
+
+---
+
+### **3. Write Control Signal**
+
+The SoC provides a global write indicator through `mem_wstrb`. This signal is used along with the selection signal inside the IP to control write operations.
+
+* `mem_wstrb` is derived as:
+
+  ```verilog
+  wire mem_wstrb = |mem_wmask;
+  ```
+
+**Behavior:**
+
+* `mem_wstrb = 1` → write operation
+* `mem_wstrb = 0` → no write
+
+The GPIO IP internally combines:
+
+* `mem_wstrb` (write indication)
+* `GPIO_sel` (address match)
+
+to ensure safe and valid writes.
+
+---
+
+### **4. Data Path Connections**
+
+The GPIO IP is connected to the SoC bus using the following signals:
+
+* `mem_wdata` → connected to `IP_wdata` (write data input)
+* `GPIO_rdata` → connected to SoC read path
+* `mem_wstrb` → indicates write operation
+* `GPIO_sel` → indicates address selection
+
+These connections allow the processor to write data into the GPIO register and read it back.
+
+---
+
+### **5. GPIO IP Instantiation**
+
+The GPIO module is instantiated within the SoC as follows:
+
+```verilog
+GPIO_reg_IP GPIO (
+    .clk(clk),
+    .rst(resetn),
+    .wen(mem_wstrb),
+    .IP_sel(GPIO_sel),
+    .IP_wdata(mem_wdata),
+    .IP_rdata(GPIO_rdata)
+);
+```
+
+**Key Idea:**
+
+* The SoC provides global control signals
+* The IP determines when to act based on selection and write enable
+
+---
+
+### **6. Read Data Multiplexer Update**
+
+The SoC uses a multiplexer to select data returned to the CPU during read operations. The GPIO IP is integrated into this path by adding a new condition:
+
+```verilog
+wire [31:0] IO_rdata =
+    mem_wordaddr[IO_UART_CNTL_bit] ? uart_status :
+    GPIO_sel                      ? GPIO_rdata :
+                                    32'b0;
+```
+
+**Purpose:**
+
+* Ensures that when the GPIO address is accessed, its data is returned to the CPU
+* Maintains compatibility with existing peripherals
+
+---
+
+### **7. Data Flow After Integration**
+
+**Write Operation:**
+
+1. CPU writes to GPIO address
+2. `mem_addr` matches GPIO mapping
+3. `GPIO_sel = 1`, `mem_wstrb = 1`
+4. GPIO register updates with `mem_wdata`
+
+**Read Operation:**
+
+1. CPU reads from GPIO address
+2. `GPIO_sel = 1`
+3. `GPIO_rdata` is selected in multiplexer
+4. Value is returned to CPU
+
+---
+
+### **8. New Signals Introduced**
+
+| Signal        | Description                      |
+| ------------- | -------------------------------- |
+| `GPIO_IP_bit` | Defines address mapping for GPIO |
+| `GPIO_sel`    | Indicates GPIO address match     |
+| `GPIO_rdata`  | Data output from GPIO IP         |
+
+---
+
+### **9. Design Approach**
+
+The integration follows a modular design approach:
+
+* The SoC handles:
+
+  * Address decoding
+  * Data routing
+* The GPIO IP handles:
+
+  * Internal register storage
+  * Write validation
+
+This separation improves scalability and simplifies addition of future peripherals.
+The GPIO IP has been successfully integrated into the SoC using the existing memory-mapped architecture. The design maintains consistency with existing peripherals and demonstrates how new IP blocks can be added with minimal changes to the system, highlighting the modularity and extensibility of the SoC design.
 
 </details>
