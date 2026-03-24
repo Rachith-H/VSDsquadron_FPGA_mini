@@ -102,3 +102,90 @@ This modular approach allows easy addition of new peripherals without modifying 
 
 
 </details>
+
+
+
+
+<details>
+  <summary> STEP - 2: RTL Design of GPIO IP </summary>
+
+
+### **Overview**
+
+A General Purpose Input/Output (GPIO) IP block is designed to provide a simple memory-mapped interface for the processor to interact with external signals. In this design, the GPIO module implements a 32-bit register that can be written to and read from by the CPU through the SoC bus.
+
+The GPIO IP is integrated as a peripheral in the I/O address space and is accessed using standard load and store instructions from the RISC-V processor.
+
+---
+
+### **Design Objective**
+
+* Provide a 32-bit register accessible via memory-mapped I/O
+* Support write operations from the CPU
+* Allow read-back of the stored value
+* Ensure safe operation by enabling writes only when the IP is selected
+
+---
+
+### **Module Description**
+
+The GPIO IP consists of a single 32-bit register that stores data written by the processor. The register updates only when both the write enable signal and the IP select signal are asserted, ensuring correct address-based access.
+
+---
+
+### **Signal Description**
+
+| Signal Name | Direction | Description                                                                  |
+| ----------- | --------- | ---------------------------------------------------------------------------- |
+| `clk`       | Input     | System clock used for synchronous updates                                    |
+| `rst`       | Input     | Reset signal to initialize the register                                      |
+| `wen`       | Input     | Write enable signal indicating a write operation                             |
+| `IP_sel`    | Input     | Select signal indicating that the current address corresponds to the GPIO IP |
+| `IP_wdata`  | Input     | 32-bit data bus carrying data from the processor                             |
+| `IP_rdata`  | Output    | 32-bit data bus used to return stored value to the processor                 |
+
+---
+
+### **Functional Behavior**
+
+**Write Operation:**
+
+* Occurs on the rising edge of the clock
+* Triggered only when:
+
+  * `wen = 1` (write operation active)
+  * `IP_sel = 1` (address matches GPIO IP)
+* The input data (`IP_wdata`) is stored in the internal register
+
+**Read Operation:**
+
+* The stored register value is continuously driven on `IP_rdata`
+* When the CPU performs a read operation, this value is returned via the SoC read data path
+
+---
+
+### **RTL Implementation Concept**
+
+The internal register is updated using synchronous logic:
+
+* On reset → register is cleared
+* On valid write → register captures input data
+* Otherwise → retains previous value
+
+This ensures predictable and stable behavior of the GPIO IP.
+
+---
+
+### **Memory-Mapped Integration Context**
+
+The GPIO IP is designed to operate within a memory-mapped I/O system. The SoC generates the `IP_sel` signal based on address decoding logic, while `wen` is derived from the write strobe signal of the processor.
+
+This separation of concerns allows:
+
+* The SoC to handle address decoding
+* The IP to focus on functional behavior
+
+
+The GPIO IP provides a simple and effective interface for processor-controlled output operations. Its clean separation between address decoding (handled by the SoC) and functional logic (handled by the IP) ensures modularity and ease of integration into the system.
+
+</details>
