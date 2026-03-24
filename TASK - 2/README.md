@@ -162,6 +162,16 @@ The GPIO IP consists of a single 32-bit register that stores data written by the
 * The stored register value is continuously driven on `IP_rdata`
 * When the CPU performs a read operation, this value is returned via the SoC read data path
 
+The following image shows the simulation results of the designed IP with a sample [verilog testbench](rtl/GPIO_reg_IP_tb.v) using iverilog and Gtkwave.  
+
+```
+iverilog -o sim.out GPIO_reg_IP.v GPIO_reg_IP_tb.v
+vvp sim.out
+gtkwave waves.vcd
+```
+
+![sim](Images/sim.png)
+
 ---
 
 ### **RTL Implementation Concept**
