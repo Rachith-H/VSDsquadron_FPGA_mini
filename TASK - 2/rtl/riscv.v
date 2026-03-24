@@ -6,6 +6,7 @@
 `default_nettype none
 `include "clockworks.v"
 `include "emitter_uart.v"
+`include "GPIO_reg_IP.v"
 
 module Memory (
    input             clk,
@@ -358,6 +359,22 @@ module SOC (
    localparam IO_UART_DAT_bit  = 1;  // W data to send (8 bits) 
    localparam IO_UART_CNTL_bit = 2;  // R status. bit 9: busy sending
    
+   //-------------TASK-2 GPIO_IP -------
+   
+   localparam GPIO_IP_bit = 3; // Bit for addressing of GPIO IP
+   wire [31:0] GPIO_rdata ; // GPIO_IP output signal 
+   wire GPIO_sel = isIO & mem_wordaddr[GPIO_IP_bit]; // select line for GPIO_IP
+   
+   GPIO_reg_IP GPIO(.clk(clk),
+   		    .IP_wdata(mem_wdata),
+   		    .IP_rdata(GPIO_rdata),
+   		    .IP_sel(GPIO_sel),
+   		    .rst(resetn),
+   		    .wen(mem_wstrb)
+   );
+   
+   //------------------------------------
+   
    always @(posedge clk) begin
       if(isIO & mem_wstrb & mem_wordaddr[IO_LEDS_bit]) begin
 	 LEDS <= mem_wdata;
@@ -382,8 +399,8 @@ module SOC (
    );
 
    wire [31:0] IO_rdata = 
-	       mem_wordaddr[IO_UART_CNTL_bit] ? { 22'b0, !uart_ready, 9'b0}
-	                                      : 32'b0;
+	       mem_wordaddr[IO_UART_CNTL_bit] ? { 22'b0, !uart_ready, 9'b0}: 
+	       GPIO_sel ? GPIO_rdata : 32'b0;
    
    assign mem_rdata = isRAM ? RAM_rdata :
 	                      IO_rdata ;
