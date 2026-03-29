@@ -12,7 +12,7 @@ This task formally transitions the cohort from environment setup to real IP deve
 
 #### **Overview**
 
-The given [SoC](rtl/riscv.v) consists of a simple RISC-V processor integrated with on-chip memory and memory-mapped peripherals. The design follows a **memory-mapped I/O architecture**, where both RAM and peripherals are accessed using a unified address space.
+The given [SoC](RTL/riscv.v) consists of a simple RISC-V processor integrated with on-chip memory and memory-mapped peripherals. The design follows a **memory-mapped I/O architecture**, where both RAM and peripherals are accessed using a unified address space.
 
 ---
 
@@ -112,7 +112,7 @@ This modular approach allows easy addition of new peripherals without modifying 
 
 ### **Overview**
 
-A General Purpose Input/Output (GPIO) [IP block](rtl/GPIO_reg_IP.v) is designed to provide a simple memory-mapped interface for the processor to interact with external signals. In this design, the GPIO module implements a 32-bit register that can be written to and read from by the CPU through the SoC bus.
+A General Purpose Input/Output (GPIO) [IP block](RTL/GPIO_reg_IP.v) is designed to provide a simple memory-mapped interface for the processor to interact with external signals. In this design, the GPIO module implements a 32-bit register that can be written to and read from by the CPU through the SoC bus.
 
 The GPIO IP is integrated as a peripheral in the I/O address space and is accessed using standard load and store instructions from the RISC-V processor.
 
@@ -210,7 +210,7 @@ The GPIO IP provides a simple and effective interface for processor-controlled o
 
 ### **Overview**
 
-The GPIO IP is integrated into the given [RISC-V SoC](rtl/riscv.v) using a memory-mapped I/O approach. The SoC already supports peripherals such as LEDs and UART, and the GPIO module is added as an additional peripheral within the I/O address space.
+The GPIO IP is integrated into the given [RISC-V SoC](RTL/riscv.v) using a memory-mapped I/O approach. The SoC already supports peripherals such as LEDs and UART, and the GPIO module is added as an additional peripheral within the I/O address space.
 
 The integration involves assigning a unique address to the GPIO IP, generating control signals based on address decoding, connecting data paths, and updating the read data multiplexer.
 
@@ -374,3 +374,109 @@ This separation improves scalability and simplifies addition of future periphera
 The GPIO IP has been successfully integrated into the SoC using the existing memory-mapped architecture. The design maintains consistency with existing peripherals and demonstrates how new IP blocks can be added with minimal changes to the system, highlighting the modularity and extensibility of the SoC design.
 
 </details>
+
+
+<details>
+  <summary> STEP - 4 : Simulation based Validation of Integrated IP </summary>
+
+### **Overview**
+This step focuses on verifying the functional correctness of the designed system using simulation. The goal is to ensure proper interaction between the processor and peripherals (GPIO and UART) through a simple C program.
+
+---
+
+### **1. Test Program Description**
+
+A simple [C program](RTL/gpio_testing.c) was used to validate the design. The program performs the following operations:
+
+- Writes predefined values to the GPIO register
+- Reads back the values from the same register
+
+```
+#define GPIO_REG *((volatile unsigned int*)0x00400020)
+
+void _start(void) {
+    GPIO_REG = 0xDEADE123;
+    volatile unsigned int read_data;
+    read_data = GPIO_REG;
+    GPIO_REG = 0x5555AAAA;
+    while(1);
+}
+```
+
+This helps in confirming both write and read paths of the memory-mapped peripheral.
+
+---
+
+### **2. Simulation Setup**
+
+- The [C program](RTL/gpio_testing.c) was compiled into a HEX file using a RISC-V gcc compiler.
+```
+riscv64-unknown-elf-gcc -O0 -nostdlib -march=rv32i -mabi=ilp32 -Ttext=0x0 gpio_testing.c -o gpio_testing.elf
+riscv64-unknown-elf-objcopy -O binary gpio_testing.elf gpio_testing.bin
+hexdump -v -e '1/4 "%08x\n"' gpio_testing.bin > firmware.hex
+```
+
+- The [HEX file](RTL/firmware.hex) was loaded into instruction memory using $readmemh.
+- Simulation was performed using iverilog and gtkwave.
+```
+iverilog -o sim.out -DBENCH riscv.v SOC_IP_tb.v && vvp sim.out
+gtkwave waves.vcd
+```
+- Waveforms were observed to verify signal behavior.
+
+---
+
+### **3. Verification**
+
+The following conditions were successfully verified:
+
+- Correct Register Updates
+  - GPIO register correctly captures the data written by the processor
+  - Write enable and address decoding logic function as expected
+- Correct Readback Behavior
+  - Values read from the GPIO register match the values written earlier
+  - No data corruption or undefined (X) values observed during operation
+ 
+
+**GPIO Write Transaction**
+- Address Match: The CPU drives mem_addr to 0x00400020, which triggers the internal decoder to set IP_sel high.
+- Data Capture: While IP_sel and wen (Write Enable) are both high, the 32-bit pattern is transferred from the bus into the hardware register.
+- Stability: The GPIO_reg signal successfully holds the new value even after the write pulse ends, proving the register logic is stable.
+
+**GPIO Read Transaction**
+- Read Request: The CPU requests a load from 0x00400020; IP_sel goes high while wen remains at 0.
+- Data Output: The IP immediately places its internal GPIO_reg value onto the IP_rdata bus.
+- Verification: The waveform shows the correct value appearing on the main mem_rdata bus, confirming the CPU has successfully "read back" the data from the hardware.
+
+![write1](Images/IP_write1.png)
+
+![read1](Images/IP_read1.png)
+
+![write2](Images/IP_write2.png)
+
+![read2](Images/IP_read2.png)
+
+
+The simulation successfully validates:
+
+- Functional correctness of GPIO read/write operations
+- Proper integration of memory-mapped peripherals
+
+This confirms that the design behaves as expected and is ready for further stages.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</details>
+
+
