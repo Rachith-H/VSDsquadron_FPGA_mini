@@ -10,13 +10,13 @@ This task formally transitions the cohort from environment setup to real IP deve
   <summary> STEP - 1 : Understand the existing SoC </summary>
 
 
-#### **Overview**
+### **Overview**
 
 The given [SoC](RTL/riscv.v) consists of a simple RISC-V processor integrated with on-chip memory and memory-mapped peripherals. The design follows a **memory-mapped I/O architecture**, where both RAM and peripherals are accessed using a unified address space.
 
 ---
 
-#### **1. Processor–Memory Interface**
+### **1. Processor–Memory Interface**
 
 The processor communicates with memory and peripherals using a simple bus interface consisting of the following signals:
 
@@ -30,7 +30,7 @@ Write operations are identified when `mem_wmask` is non-zero, while read operati
 
 ---
 
-#### **2. Memory Organization**
+### **2. Memory Organization**
 
 The SoC contains an internal RAM module implemented as a 32-bit wide memory array. The memory is word-addressable, where the lower two bits of the address are ignored to ensure alignment.
 
@@ -38,7 +38,7 @@ The SoC contains an internal RAM module implemented as a 32-bit wide memory arra
 
 ---
 
-#### **3. Address Decoding and Memory Mapping**
+### **3. Address Decoding and Memory Mapping**
 
 The SoC divides the address space into two regions:
 
@@ -49,7 +49,7 @@ This simple decoding mechanism determines whether a memory access is directed to
 
 ---
 
-#### **4. Memory-Mapped I/O**
+### **4. Memory-Mapped I/O**
 
 Peripheral devices are integrated using memory-mapped addressing. Each peripheral is assigned a unique address within the I/O region using a one-hot encoding scheme based on the word address.
 
@@ -69,7 +69,7 @@ Peripheral devices are integrated using memory-mapped addressing. Each periphera
 
 ---
 
-#### **5. Data Flow During Access**
+### **5. Data Flow During Access**
 
 **Write Operation:**
 
@@ -88,7 +88,7 @@ Peripheral devices are integrated using memory-mapped addressing. Each periphera
 
 ---
 
-#### **6. Integration of IPs in the SoC**
+### **6. Integration of IPs in the SoC**
 
 IP blocks are integrated by:
 
