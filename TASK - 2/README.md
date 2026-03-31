@@ -380,7 +380,7 @@ The GPIO IP has been successfully integrated into the SoC using the existing mem
   <summary> STEP - 4 : Simulation based Validation of Integrated IP </summary>
 
 ### **Overview**
-This step focuses on verifying the functional correctness of the designed system using simulation. The goal is to ensure proper interaction between the processor and peripherals (GPIO and UART) through a simple C program.
+This step focuses on verifying the functional correctness of the designed system using simulation. The goal is to ensure proper interaction between the processor and peripherals through a simple C program.
 
 ---
 
