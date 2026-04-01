@@ -162,6 +162,9 @@ The `GPIO_dir` register determines the mode of each GPIO pin:
 * Memory-mapped register interface
 * Modular and scalable structure
 
+**Simulation Results** as obtained with a seperate [testbench](RTL/GPIO_ctrl_IP_tb.v) for the design.
+
+![sim](Images/GPIO_crtl_ip_sim.png)
 
 The GPIO Control IP RTL successfully implements a multi-register, memory-mapped peripheral. The design provides flexibility through direction control and structured register access, forming a foundation for more advanced peripheral designs.
 
