@@ -327,6 +327,19 @@ gtkwave waves.vcd
 * Read operations returned expected values from GPIO_read
 * Address offset decoding correctly selected internal registers
 
+![w1](Images/tsk3_w1.png)
+
+![r1](Images/tsk3_r1.png)
+
+![w2](Images/tsk3_w2.png)
+
+![rf](Images/tsk3_rf.png)
+
+External Pin Input : 0x1234000
+Direction set : 0x0000FFFF 
+Data Written : 0xA5A5A5A5
+Data Read : 0x1234A5A5
+
 
 
 The GPIO Control IP was successfully validated using C-based simulation. The results confirm correct functionality of register mapping, read/write operations, and integration with the RISC-V SoC, demonstrating proper hardware-software interaction.
