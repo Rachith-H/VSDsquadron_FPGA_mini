@@ -78,7 +78,7 @@ This step establishes a clear design plan for implementing a multi-register GPIO
 
 ### **Overview**
 
-In this step, a multi-register [GPIO Control IP](RTL/GPIO_ctrl_IP) is implemented in RTL. The design extends the basic single-register GPIO into a structured peripheral with multiple registers, 
+In this step, a multi-register [GPIO Control IP](RTL/GPIO_ctrl_IP.v) is implemented in RTL. The design extends the basic single-register GPIO into a structured peripheral with multiple registers, 
 enabling configurable input/output behavior and organized memory-mapped access.
 
 ---
