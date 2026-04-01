@@ -339,8 +339,11 @@ gtkwave waves.vcd
 ![rf](Images/tsk3_rf.png)
 
 External Pin Input : 0x1234000
+
 Direction set : 0x0000FFFF 
+
 Data Written : 0xA5A5A5A5
+
 Data Read : 0x1234A5A5
 
 
