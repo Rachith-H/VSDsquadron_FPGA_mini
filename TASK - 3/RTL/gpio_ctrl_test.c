@@ -1,12 +1,10 @@
 /*
  * Task-3: GPIO Control IP - Direct Simulation Test
- * No UART. Validate via $display in testbench / waveform.
  *
  * Address Map:
  *   GPIO_DATA = 0x00400000
  *   GPIO_DIR  = 0x00400004
  *   GPIO_READ = 0x00400008
- *   LEDS      = 0x00400010
  *
  * Testbench: drive GPIO_ext_pins = 0x12340000
  * DIR = 0x0000FFFF → lower 16 = output, upper 16 = input
