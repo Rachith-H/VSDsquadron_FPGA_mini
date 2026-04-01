@@ -251,7 +251,7 @@ This is implemented as:
 
 - CPU reads from GPIO base address + offset
 - Offset determines which register is accessed
-- Corresponding data is returned via GPIO_rdata
+- Corresponding data is returned
 
 
 The GPIO Control IP is successfully integrated into the SoC with support for multiple registers through address offset decoding. The design maintains modularity and demonstrates how complex peripherals can be incorporated into a memory-mapped system with minimal changes to the existing architecture.
