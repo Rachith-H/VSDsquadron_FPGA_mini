@@ -175,7 +175,7 @@ The GPIO Control IP RTL successfully implements a multi-register, memory-mapped 
 
 ### **Overview**
 
-In this step, the multi-register GPIO Control IP is integrated into the existing RISC-V SoC using the memory-mapped I/O mechanism. The integration extends the previous single-register approach by supporting multiple registers within the same IP using address offsets.
+In this step, the multi-register GPIO Control IP is integrated into the [RISC-V SoC](RTL/riscv.v) using the memory-mapped I/O mechanism. The integration extends the previous single-register approach by supporting multiple registers within the same IP using address offsets.
 
 ---
 ### **1. Address Mapping**
@@ -267,51 +267,66 @@ The GPIO Control IP is successfully integrated into the SoC with support for mul
   <summary> STEP - 4 : Validation using C Program based Simulation </summary
 
 
-#### **Overview**
+### **Overview**
 
-The functionality of the GPIO Control IP is validated using a C program executed on the RISC-V SoC in simulation. 
+The functionality of the GPIO Control IP is validated using a [C program](RTL/gpio_ctrl_test.c) executed on the RISC-V SoC in simulation. 
 This step ensures correct interaction between software and hardware through memory-mapped I/O.
 
 ---
 
-#### **Verification Flow**
+### **1. Verification Flow**
 
 The validation process follows a hardware-software co-simulation approach:
 
 1. **C Program Development**
-   A C program is written to:
 
-   * Configure GPIO direction using `GPIO_DIR`
-   * Write data to `GPIO_DATA`
-   * Read back values using `GPIO_READ`
+   A [C program](RTL/gpio_ctrl_test.c) is written to:
+
+   * Configure GPIO direction using `GPIO_dir`
+   * Write data to `GPIO_data`
+   * Read back values using `GPIO_read`
 
 2. **Compilation to HEX**
+
    The C program is compiled using the RISC-V GCC toolchain.
-   The generated ELF file is converted into a `.hex` file, which is used as instruction memory for the SoC.
+   The generated ELF file is converted into a [HEX file](RTL/firmware.hex), which is used as instruction memory for the SoC.
+
+```
+riscv64-unknown-elf-gcc -O0 -nostdlib -march=rv32i -mabi=ilp32 -Ttext=0x0 gpio_ctrl_test.c -o gpio_ctrl_test.elf
+riscv64-unknown-elf-objcopy -O binary gpio_ctrl_test.elf gpio_ctrl_test.bin
+hexdump -v -e '1/4 "%08x\n"' gpio_ctrl_test.bin > firmware.hex
+```
 
 3. **Loading into Simulation**
+   
    The `.hex` file is loaded into the instruction memory using `$readmemh`, allowing the processor to fetch and execute instructions during simulation.
 
 4. **RTL Simulation**
-   A testbench instantiates the SoC and runs the simulation.
+   
+   A [testbench](RTL/SOC_IP_tb.v) instantiates the SoC and runs the simulation.
    The processor executes the compiled program, generating memory transactions on the bus.
+
+```
+iverilog -o sim.out -DBENCH riscv.v SOC_IP_tb.v && vvp sim.out
+gtkwave waves.vcd
+```
 
 5. **Observation and Verification**
 
-   * Write operations are observed through `mem_wdata` and `mem_wmask`
+   * Write operations are observed through `mem_wdata` 
    * Address decoding confirms correct register selection using offsets
    * Read data is verified through `GPIO_rdata`
    * Internal register updates (`gpio_data`, `gpio_dir`) are monitored
 
 ---
 
-#### **Results**
+### **2. Results**
 
 * Correct configuration of GPIO direction was observed
-* Write operations successfully updated the GPIO_DATA register
-* Read operations returned expected values from GPIO_READ
+* Write operations successfully updated the GPIO_data register
+* Read operations returned expected values from GPIO_read
 * Address offset decoding correctly selected internal registers
-* No unintended writes occurred due to proper gating logic
+
 
 
 The GPIO Control IP was successfully validated using C-based simulation. The results confirm correct functionality of register mapping, read/write operations, and integration with the RISC-V SoC, demonstrating proper hardware-software interaction.
