@@ -284,7 +284,9 @@ assign clk = frequency_counter_i[24];
 
 ### 2. Results
 
-![demo](VSD_fpga_timerIP.mp4)
+
+https://github.com/user-attachments/assets/2d0397fb-8b54-45da-96fa-42dc19e48786
+
 
 - Upon deployment, the timer was observed to count down correctly, automatically reload upon reaching zero, and toggle the timeout signal periodically. The LED outputs provided clear visual confirmation of correct functionality.
 
