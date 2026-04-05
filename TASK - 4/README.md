@@ -113,7 +113,7 @@ A seperate [IP_testbench](RTL/Timer_IP/timer_ip_tb.v) was used to test the IP in
 <details>
   <summary> STEP - 2 : Integration of Timer IP into SoC </summary>
   
-### 📌 Overview
+### Overview
 
 The Timer IP is integrated into the [RISC-V SoC](RTL/riscv.v) as a **memory-mapped peripheral**, allowing the processor to configure and monitor the timer using standard load/store instructions.
 
