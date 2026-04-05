@@ -88,6 +88,22 @@ Read-only. Reflects the live countdown value as it decrements toward zero. Does 
 
 6. **Clearing TIMEOUT:** Write `1` to bit 0 of `STATUS` to clear the flag (write-1-to-clear semantics).
 
+
+A seperate [IP_testbench](RTL/Timer_IP/timer_ip_tb.v) was used to test the IP individually before integrating into SoC.
+
+- Oneshote mode :
+![prescaler](Images/timer_oneshot.png)
+
+
+- Auto reload mode:
+![rel](Images/timer_autoreload.png)
+
+
+- Prescale division enabled :
+![prescaler](Images/timer_prescaled.png)
+
+
+---
 </details>
 
 
