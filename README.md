@@ -4,7 +4,7 @@ This program is part of the VSD FPGA IP Development cohort, designed to transiti
 
 ---
 
-## Task 1 — Environment Setup & RISC-V Reference Bring-Up
+## Task 1 - Environment Setup & RISC-V Reference Bring-Up
 
 - Forked and launched the vsd-riscv2 GitHub Codespace
 - Built and ran the RISC-V reference program successfully
@@ -13,7 +13,7 @@ This program is part of the VSD FPGA IP Development cohort, designed to transiti
 
 ---
 
-## Task 2 — Simple GPIO Output IP
+## Task 2 - Simple GPIO Output IP
 
 - Designed a single-register 32-bit write/read GPIO IP
 - Integrated into the RISC-V SoC using 1-hot address decoding
@@ -22,7 +22,7 @@ This program is part of the VSD FPGA IP Development cohort, designed to transiti
 
 ---
 
-## Task 3 — Multi-Register GPIO Control IP
+## Task 3 - Multi-Register GPIO Control IP
 
 - Extended GPIO IP to 3 registers — GPIO_DATA, GPIO_DIR, GPIO_READ
 - Implemented offset-based register decoding using mem_addr[3:2]
@@ -32,7 +32,7 @@ This program is part of the VSD FPGA IP Development cohort, designed to transiti
 
 ---
 
-## Task 4 — Timer IP (Core Contributor)
+## Task 4 - Timer IP 
 
 - Designed a full programmable countdown Timer IP from scratch with 4 registers — CTRL, LOAD, VALUE, STATUS
 - Supports one-shot and periodic auto-reload modes
