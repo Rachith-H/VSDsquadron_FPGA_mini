@@ -4,6 +4,8 @@
 
 This is a memory-mapped programmable [Timer IP](RTL/Timer_IP/timer_ip.v) designed for integration into a [RISC-V SoC](RTL/riscv.v). It supports one-shot and periodic (auto-reload) countdown modes, with an optional clock prescaler for longer timeout intervals. The IP is written in synchronous Verilog and follows the common memory-mapped register interface used across all peripherals in this SoC.
 
+![bd](Images/BLK_DIG.png)
+
 ---
 
 <details>
