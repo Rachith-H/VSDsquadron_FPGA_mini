@@ -13,7 +13,7 @@ This program is part of the VSD FPGA IP Development cohort, designed to transiti
 
 ---
 
-## Task 2 - Simple GPIO Output IP
+## Task 2 - Simple GPIO Register IP
 
 - Designed a single-register 32-bit write/read GPIO IP
 - Integrated into the RISC-V SoC using 1-hot address decoding
