@@ -356,7 +356,11 @@ module SOC (
    );
 
   wire [1:0] offset = mem_wordaddr[1:0]; 
-  wire GPIO_sel = isIO && (offset==2'b00 || offset==2'b01 || offset==2'b10);
+  wire GPIO_sel = isIO 
+             && !mem_wordaddr[IO_LEDS_bit] 
+             && !mem_wordaddr[IO_UART_DAT_bit] 
+             && !mem_wordaddr[IO_UART_CNTL_bit]
+             && (offset == 2'b00 || offset == 2'b01 || offset == 2'b10);
   wire [31:0] GPIO_rdata;
   
   GPIO_ctrl_IP gpio(
