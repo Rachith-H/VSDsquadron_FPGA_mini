@@ -165,7 +165,7 @@ The Timer IP interfaces with the SoC bus using standard signals:
   - VALUE → current countdown  
   - STATUS → timeout flag  
 
----
+The timer IP was successfully integrated with the RISC-V processor through a memory-mapped interface. The processor was able to configure the timer registers, demonstrating correct address decoding and bus communication. This confirms proper interaction between the processor and peripheral at the system level.
 
 </details>
 
@@ -215,3 +215,74 @@ The Timer IP was successfully designed, integrated, and validated within the RIS
 
 </details>
 
+
+
+<details>
+  <summary> STEP - 4 : Hardware Implementation on VSDSQUADRON FPGA MINI </summary>
+
+- For FPGA validation, a dedicated [assembly program](Software/times_test.s) was developed and converted into a [firmware.hex](RTL/firmware.hex) file for loading into the instruction memory. Assembly was preferred over C to achieve precise control over instruction execution and to ensure predictable interaction with the timer IP.
+
+```
+.section .text
+.globl _start
+
+_start:
+    # Build address 0x00400010 using lui + addi
+    # lui loads upper 20 bits, addi adds lower 12 bits
+    # 0x00400010 = upper: 0x00400, lower: 0x010
+
+    lui  t0, 0x400          # t0 = 0x00400000
+    addi t0, t0, 16         # t0 = 0x00400010  (TIMER_CTRL)
+
+    # Write TIMER_LOAD = 4  (CTRL + 4 = 0x00400014)
+    addi t1, zero, 4
+    sw   t1, 4(t0)          # MEM[0x00400014] = 4
+
+    # Write TIMER_CTRL = 0x3  (EN=1, MODE=1 periodic, PRESC=0)
+    addi t1, zero, 3
+    sw   t1, 0(t0)          # MEM[0x00400010] = 3
+
+spin:
+    j spin                  # hang forever, timer runs on its own
+```
+
+Commands to convert Assemble file to .hex file :
+```
+riscv64-unknown-elf-gcc -march=rv32i -mabi=ilp32 \
+  -nostdlib -nostartfiles -Ttext=0x0 \
+  timer_test.s -o timer_test.elf
+
+riscv64-unknown-elf-objcopy -O verilog \
+  --verilog-data-width=4 \
+  timer_test.elf firmware.hex
+```
+
+- The timer was configured to operate in auto-reload mode, with the counter initialized to a small value - 0x4 to enable faster observation of the timeout behavior. Minor design modifications were introduced to expose the internal counter value and timeout flag as output signals, which were connected to external LEDs for real time visual monitoring.
+
+- Additionally, the internal oscillator was used as the clock source, allowing the design to run independently without requiring external clock modules. This simplified the hardware setup and excluded `clockworks.v` and `femtopll.v` modules during FPGA implementation.
+
+```
+wire clk;
+wire int_osc;
+reg  [27:0] frequency_counter_i;
+SB_HFOSC u_SB_HFOSC (.CLKHFPU(1'b1), .CLKHFEN(1'b1), .CLKHF(int_osc));
+assign clk = frequency_counter_i[24];
+```
+
+- Upon deployment, the timer was observed to count down correctly `4 -> 3 -> 2 -> 1 -> 0 -> 4 ...`, automatically reload upon reaching zero, and toggle the `timeout` signal periodically. The LED outputs provided clear visual confirmation of correct functionality.
+    - Blue LEDs : Counter value - counts from 4 -> 3 -> 2 -> 1 -> 0 -> 4 ... 
+    - Yelloe LED : Timeout - Toggles everytime counter reaches 0 and reloads.
+
+- This hardware validation confirms successful end-to-end operation of the system, including processor execution, memory-mapped communication, and peripheral behavior on real hardware.
+ 
+
+
+
+
+
+
+
+
+
+
+</details>
