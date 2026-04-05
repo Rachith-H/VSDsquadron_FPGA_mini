@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a memory-mapped programmable Timer peripheral IP designed for integration into a RISC-V SoC. It supports one-shot and periodic (auto-reload) countdown modes, with an optional clock prescaler for longer timeout intervals. The IP is written in synchronous Verilog and follows the common memory-mapped register interface used across all peripherals in this SoC.
+This is a memory-mapped programmable [Timer IP](RTL/Timer_IP/timer_ip.v) designed for integration into a [RISC-V SoC](RTL/riscv.v). It supports one-shot and periodic (auto-reload) countdown modes, with an optional clock prescaler for longer timeout intervals. The IP is written in synchronous Verilog and follows the common memory-mapped register interface used across all peripherals in this SoC.
 
 ---
 
@@ -11,7 +11,7 @@ This is a memory-mapped programmable Timer peripheral IP designed for integratio
   
 ### Overview
 
-The Timer operates as a **down counter**:
+The  [Timer IP](RTL/Timer_IP/timer_ip.v) operates as a **down counter**:
 
 - A value is written into the `LOAD` register  
 - When enabled (`EN = 1`), the timer starts decrementing  
@@ -26,7 +26,7 @@ A **prescaler** is used to divide the clock, allowing slower and more controllab
 
 ---
 
-### Register Map
+### 1. Register Map
 
 **Base Address:** `0x00400010`
 
@@ -41,7 +41,7 @@ All registers are 32-bit, word-aligned. Reads from undefined offsets return `0`.
 
 ---
 
-### CTRL — Control Register (`0x00`)
+### 2. CTRL — Control Register (`0x00`)
 
 | Bits    | Field     | Description                                          |
 |---------|-----------|------------------------------------------------------|
@@ -53,19 +53,19 @@ All registers are 32-bit, word-aligned. Reads from undefined offsets return `0`.
 
 ---
 
-### LOAD — Load Register (`0x04`)
+### 3. LOAD — Load Register (`0x04`)
 
 32-bit countdown start value. When the timer is enabled (EN=1), the counter loads from this register. In periodic mode, it reloads from this register automatically on each timeout.
 
 ---
 
-### VALUE — Current Value Register (`0x08`)
+### 4. VALUE — Current Value Register (`0x08`)
 
 Read-only. Reflects the live countdown value as it decrements toward zero. Does not include write access.
 
 ---
 
-### STATUS — Status Register (`0x0C`)
+### 5. STATUS — Status Register (`0x0C`)
 
 | Bits | Field   | Description                                              |
 |------|---------|----------------------------------------------------------|
@@ -74,7 +74,7 @@ Read-only. Reflects the live countdown value as it decrements toward zero. Does 
 
 ---
 
-## Functional Behavior
+### 6. Functional Behavior
 
 1. **Starting the timer:** Software writes a value to `LOAD`, then sets `EN=1` in `CTRL`. The counter begins decrementing from `LOAD` each clock cycle (or each prescaled tick if `PRESC_EN=1`).
 
@@ -95,44 +95,106 @@ Read-only. Reflects the live countdown value as it decrements toward zero. Does 
 <details>
   <summary> STEP - 2 : Integration of Timer IP into SoC </summary>
   
+### 📌 Overview
 
-## SoC Integration
+The Timer IP is integrated into the [RISC-V SoC](RTL/riscv.v) as a **memory-mapped peripheral**, allowing the processor to configure and monitor the timer using standard load/store instructions.
 
-The Timer IP is integrated into `riscv.v`. Address decoding uses the upper bits of `mem_addr` to select the peripheral, and the lower bits (`mem_addr[3:2]`) select the register offset within the IP.
+The integration ensures seamless communication between the CPU and the Timer through the system bus.
 
-The relevant signals connected from the SoC bus to the Timer IP are:
 
-- `mem_addr[31:0]` — address bus
-- `mem_wdata[31:0]` — write data
-- `mem_rdata[31:0]` — read data (muxed with other peripherals)
-- `mem_wen` — write enable
-- `clk`, `resetn` — clock and active-low reset
+### 1. Address Decoding
 
-The base address `0x00400010` places the Timer in the peripheral address window. Decoding checks that the upper address bits match the base, then routes offset `[3:2]` to select CTRL, LOAD, VALUE, or STATUS.
+- The Timer IP is selected using **address decoding logic**
+- When the incoming bus address matches the Timer address range:
+  - `timer_sel` signal is asserted  
+- Register selection is done using lower address bits (offset decoding)
 
 ---
 
-## Software Validation
+### 2. Bus Interface Signals
 
-Three separate C firmware files were written to validate each operating mode independently. Each program directly reads and writes the memory-mapped registers using volatile pointer accesses, with no UART dependency — pass/fail is confirmed through `$display` output in the simulation testbench.
+The Timer IP interfaces with the SoC bus using standard signals:
 
-- **`test_oneshot.c`** — Programs a LOAD value, enables the timer in one-shot mode, polls `STATUS.TIMEOUT`, then clears the flag and verifies the counter has stopped.
-- **`test_periodic.c`** — Enables periodic mode and observes multiple successive timeouts without software reload, confirming auto-reload behavior.
-- **`test_prescaler.c`** — Enables the prescaler with a chosen `PRESC_DIV` value and verifies that the timeout occurs after the expected number of clock cycles.
+- `clk` → System clock  
+- `rstn` → Active-low reset  
+- `timer_wdata` → Write data  
+- `timer_rdata` → Read data  
+- `wen` → Write enable  
+- `timer_sel` → Peripheral select  
+
+---
+
+### 3. Write Operation
+
+- When:
+  - `timer_sel = 1`
+  - `wen = 1`
+
+- Data from `timer_wdata` is written into the selected register:
+  - CTRL → control configuration  
+  - LOAD → initial count value  
+  - STATUS → used for clearing TIMEOUT (W1C)  
+
+---
+
+### 4. Read Operation
+
+- When:
+  - `timer_sel = 1`
+  - Read operation is performed  
+
+- The selected register value is driven onto `timer_rdata`:
+  - CTRL → configuration bits  
+  - LOAD → programmed value  
+  - VALUE → current countdown  
+  - STATUS → timeout flag  
+
+---
+
+</details>
+
+
+<details>
+  <summary> STEP - 3 : Validation using C program based Simulation </summary>
+ 
+
+### 1. Software Validation
+
+Three separate C files were written to validate each operating mode independently. Each program directly reads and writes the memory-mapped registers using volatile pointer accesses.
+
+- [Program1 - Oneshot mode](Software/timer_test_oneshot.c) — Programs a LOAD value, enables the timer in one-shot mode, polls `status`, then clears the flag and verifies the counter has stopped.
+- [Program2 - Auto Reload mode](Software/timer_test_reload.c) — Enables periodic mode and observes multiple successive timeouts without software reload, confirming auto-reload behavior.
+- [Program3 - Prescale Division](Software/timer_test_prescale.c) — Enables the prescaler with a chosen `prescalediv` value and verifies that the timeout occurs after the expected number of clock cycles.
+
+
+The following commands convert the C program to `firmware.hex` file : 
+```
+riscv64-unknown-elf-gcc -O0 -nostdlib -march=rv32i -mabi=ilp32 -Ttext=0x0 timer_test.c -o timer_test.elf
+riscv64-unknown-elf-objcopy -O binary timer_test.elf timer_test.bin
+hexdump -v -e '1/4 "%08x\n"' timer_test.bin > firmware.hex
+```
 
 ---
 
 ## Simulation
 
-Simulation was performed using **iverilog + vvp**, with waveforms viewed in **GTKWave**. The testbench instantiates the full SoC (`riscv.v`) and drives the RISC-V core with compiled firmware hex files. All three modes were simulated and confirmed working.
+The [soc_testbench](RTL/SOC_IP_tb.v) instantiates the full SoC and drives the RISC-V core with compiled firmware hex files. All three modes were simulated and confirmed working.
 
-Key simulation notes:
-- All source files include `` `timescale 1ns/1ps `` to ensure clock delays are interpreted correctly.
-- Reset is active-low (`resetn`); the reset counter in `clockworks.v` was reduced to speed up simulation boot time.
-- Validation output is visible via `$display` statements in the testbench.
+```
+iverilog -o sim.out -DBENCH riscv.v SOC_IP_tb.v && vvp sim.out
+gtkwave waves.vcd
+```
+
+- Value loaded nitially : 0xD
+![oneshot](Images/oneshot.png)
+
+- Value reloaded to : 0xD
+![relod](Images/reload.png)
+
+- Prescale Value : 0x2 
+![pres](Images/prescale.png)
 
 ---
 
-## Reset Behavior
+</details>
 
-The IP uses an active-low synchronous reset (`resetn`). On reset, all registers return to their default state: `CTRL=0`, `LOAD=0`, `VALUE=0`, `STATUS=0`. The timer does not count while in reset.
