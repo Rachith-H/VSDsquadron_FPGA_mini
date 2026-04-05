@@ -210,7 +210,8 @@ gtkwave waves.vcd
 - Prescale Value : 0x2 
 ![pres](Images/prescale.png)
 
----
+
+The Timer IP was successfully designed, integrated, and validated within the RISC-V SoC environment. All key functionalities, including one-shot mode, periodic auto-reload mode, and prescaler based operation, were verified through dedicated C test programs and simulation waveforms. The results confirm correct register behavior, accurate countdown operation, and proper timeout flag handling, demonstrating reliable end to end hardware software interaction.
 
 </details>
 
