@@ -218,10 +218,10 @@ The Timer IP was successfully designed, integrated, and validated within the RIS
 
 
 <details>
-  <summary> STEP - 4 : Hardware Implementation on VSDSQUADRON FPGA MINI </summary>
+  <summary> STEP - 4 : Hardware Implementation on VSDsquadron FPGA MINI  Board </summary>
 
 ### Overview
-The final stage of the project involved deploying the integrated RISC-V processor and timer IP on FPGA to validate system functionality in real hardware. This step focuses on verifying the interaction between software and hardware beyond simulation, ensuring correct execution, peripheral control, and observable outputs.
+The final stage of the project involved deploying the integrated RISC-V processor and timer IP on the provided FPGA to validate system functionality in real hardware. This step focuses on verifying the interaction between software and hardware beyond simulation, ensuring correct execution, peripheral control, and visual outputs.
 
 ---
 
@@ -253,7 +253,7 @@ spin:
     j spin                  # hang forever, timer runs on its own
 ```
 
-Commands to convert Assemble file to .hex file :
+Commands to convert assemble file to .hex file :
 ```
 riscv64-unknown-elf-gcc -march=rv32i -mabi=ilp32 \
   -nostdlib -nostartfiles -Ttext=0x0 \
@@ -277,12 +277,14 @@ assign clk = frequency_counter_i[24];
 ```
 
 - Upon deployment, the timer was observed to count down correctly `4 -> 3 -> 2 -> 1 -> 0 -> 4 ...`, automatically reload upon reaching zero, and toggle the `timeout` signal periodically. The LED outputs provided clear visual confirmation of correct functionality.
-    - Blue LEDs : Counter value - counts from 4 -> 3 -> 2 -> 1 -> 0 -> 4 ... 
-    - Yelloe LED : Timeout - Toggles everytime counter reaches 0 and reloads.
+    - Green LEDs : Counter value - counts from `4 -> 3 -> 2 -> 1 -> 0 -> 4 ... `
+    - Yellow LED : Timeout - Toggles everytime counter reaches 0 and reloads.
 
 ---
 
 ### 2. Results
+
+
 
 - Upon deployment, the timer was observed to count down correctly, automatically reload upon reaching zero, and toggle the timeout signal periodically. The LED outputs provided clear visual confirmation of correct functionality.
 
