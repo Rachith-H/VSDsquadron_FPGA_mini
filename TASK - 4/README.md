@@ -220,7 +220,14 @@ The Timer IP was successfully designed, integrated, and validated within the RIS
 <details>
   <summary> STEP - 4 : Hardware Implementation on VSDSQUADRON FPGA MINI </summary>
 
-- For FPGA validation, a dedicated [assembly program](Software/times_test.s) was developed and converted into a [firmware.hex](RTL/firmware.hex) file for loading into the instruction memory. Assembly was preferred over C to achieve precise control over instruction execution and to ensure predictable interaction with the timer IP.
+### Overview
+The final stage of the project involved deploying the integrated RISC-V processor and timer IP on FPGA to validate system functionality in real hardware. This step focuses on verifying the interaction between software and hardware beyond simulation, ensuring correct execution, peripheral control, and observable outputs.
+
+---
+
+### 1.Implementation Details
+
+- For FPGA validation, a dedicated [assembly program](Software/timer_test.s) was developed and converted into a [firmware.hex](RTL/firmware.hex) file for loading into the instruction memory. Assembly was preferred over C to achieve precise control over instruction execution and to ensure predictable interaction with the timer IP.
 
 ```
 .section .text
@@ -273,10 +280,15 @@ assign clk = frequency_counter_i[24];
     - Blue LEDs : Counter value - counts from 4 -> 3 -> 2 -> 1 -> 0 -> 4 ... 
     - Yelloe LED : Timeout - Toggles everytime counter reaches 0 and reloads.
 
-- This hardware validation confirms successful end-to-end operation of the system, including processor execution, memory-mapped communication, and peripheral behavior on real hardware.
- 
+---
 
+### 2. Results
 
+- Upon deployment, the timer was observed to count down correctly, automatically reload upon reaching zero, and toggle the timeout signal periodically. The LED outputs provided clear visual confirmation of correct functionality.
+
+- This hardware validation confirms successful end-to-end operation of the system, including processor execution, memory-mapped communication, and peripheral behavior on real hardware. 
+
+---
 
 
 
