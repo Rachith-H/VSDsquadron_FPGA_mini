@@ -1,0 +1,7 @@
+set_io  timer_LED[0] 4
+set_io  timer_LED[1] 12
+set_io  timer_LED[2] 13
+set_io  timeout 26
+set_io  resetn 23
+set_io TXD 32
+set_io RXD 43
