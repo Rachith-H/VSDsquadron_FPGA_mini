@@ -1,6 +1,6 @@
 # VSDsquadron FM Research Internship
 
-This program is part of the VSD FPGA IP Development cohort, designed to transition participants from environment setup to real IP ownership and contribution. The program follows a structured, hands-on approach where each participant designs, integrates, validates, and documents memory-mapped peripheral IPs on a RISC-V SoC — mirroring how real semiconductor and FPGA engineering teams operate. The target platform is the VSDSquadron FPGA board based on the Lattice iCE40, and the SoC is built around a minimal RISC-V processor core.
+This program is part of the VSD FPGA IP Development cohort, designed to transition participants from environment setup to real IP ownership and contribution. The program follows a structured, hands-on approach where each participant designs, integrates, validates, and documents memory-mapped peripheral IPs on a RISC-V SoC. The target platform is the VSDSquadron FPGA board based on the Lattice iCE40, and the SoC is built around a minimal RISC-V processor core.
 
 ---
 
