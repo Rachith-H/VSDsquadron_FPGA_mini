@@ -24,7 +24,7 @@ This program is part of the VSD FPGA IP Development cohort, designed to transiti
 
 ## Task 3 - Multi-Register GPIO Control IP
 
-- Extended GPIO IP to 3 registers — GPIO_DATA, GPIO_DIR, GPIO_READ
+- Extended GPIO IP to 3 registers. 
 - Implemented offset-based register decoding using mem_addr[3:2]
 - GPIO_DIR controls direction per bit — 1 = output, 0 = input
 - GPIO_READ reflects driven value for output pins and external pin state for input pins
