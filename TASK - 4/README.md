@@ -278,6 +278,13 @@ SB_HFOSC u_SB_HFOSC (.CLKHFPU(1'b1), .CLKHFEN(1'b1), .CLKHF(int_osc));
 assign clk = frequency_counter_i[24];
 ```
 
+- Following comands were used to program the FPGA
+```
+make clean
+make build
+sudo make flash
+```
+
 - Upon deployment, the timer was observed to count down correctly `4 -> 3 -> 2 -> 1 -> 0 -> 4 ...`, automatically reload upon reaching zero, and toggle the `timeout` signal periodically. The LED outputs provided clear visual confirmation of correct functionality.
     - Green LEDs : Counter value - counts from `4 -> 3 -> 2 -> 1 -> 0 -> 4 ... `
     - Yellow LED : Timeout - Toggles everytime counter reaches 0 and reloads.
