@@ -47,6 +47,10 @@ This program is part of the VSD FPGA IP Development cohort, designed to transiti
 
 Across these four tasks, the complete lifecycle of FPGA IP development was covered — from understanding the SoC bus architecture and memory-mapped IO, to designing increasingly complex peripherals, integrating them into a live RISC-V system, writing firmware to control them, and validating behaviour both in simulation and on real hardware. The program builds the foundational skills needed for real-world peripheral IP development, including register map design, synchronous RTL coding, address decoding, software-hardware contracts, and end to end debugging.
 
+---
+## Certificate Of Completion
+![cert](Certification.png)
+
 
 
 
